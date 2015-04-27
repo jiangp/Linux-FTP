@@ -23,6 +23,40 @@ int main(int argc ,  char *argv[])
 	cliaddr.sin_addr.s_addr = inet_addr(argv[1]);
 
 	MY_ASSERT(connect(fd_client, (struct sockaddr*)&cliaddr,sizeof(cliaddr)) ==0,"connect");
+	
+	printf("please change login or enroll\n");
+	memset(buf ,0 , 1024);
+	fflush(stdin);
+	fgets(buf, 10, stdin);
+	buf[strlen(buf) - 1] = '\0';
+	send(fd_client, buf, sizeof(buf), 0);
+	while(1){
+		printf("name: ");
+		memset(buf ,0 , 1024);
+		fflush(stdin);
+		fgets(buf, 1024, stdin);
+		buf[strlen(buf) - 1] = '\0';
+		send(fd_client, buf, sizeof(buf), 0);
+
+		printf("passwd: ");
+		memset(buf ,0 , 1024);
+		fflush(stdin);
+		fgets(buf, 1024, stdin);
+		buf[strlen(buf) - 1] = '\0';
+		send(fd_client, buf, sizeof(buf), 0);
+
+		memset(buf, 0, 1024);
+		recv(fd_client, buf, sizeof(buf), 0);
+	
+		if(strncmp(buf, "success", 7) == 0){
+			break;
+		}else if(strncmp(buf, "fail", 4) == 0){
+			printf("again!\n");
+			continue;
+		}else{
+			printf("33333\n");
+		} 
+	}
 	while(1)
 	{
 		memset(buf ,0 , 1024);
