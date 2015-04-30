@@ -9,12 +9,12 @@
 void child_main(int fd_read)
 {
 	int fd_client;
-	char flag = 1;
+//	char flag = 1;
 	while(1)
 	{		
-		recv_fd(fd_read, &fd_client);		
+		recv_fd(fd_read, &fd_client);	
 		handle(fd_client);
-		write(fd_read, &flag, sizeof(flag));
+//		write(fd_read, &flag, sizeof(flag));
 		return ;
 	}
 }

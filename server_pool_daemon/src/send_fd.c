@@ -1,5 +1,5 @@
 /*************************************************************************
-	> File Name: ./seed_fd.c
+	> File Name: ./send_fd.c
 	> Author: Arwen
 	> Mail:745529725@qq.com 
 	> Created Time: Fri 20 Mar 2015 04:34:56 PM CST

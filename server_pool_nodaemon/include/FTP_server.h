@@ -23,22 +23,40 @@
 #include<errno.h>
 #include<signal.h>
 
-/*** Macro defintion IP and PORT***/
-//#define SER_IP "192.168.1."
-//#define SER_PORT 1234
-
 /***error handle mechanism ****/
 #define MY_ASSERT(flag, msg) do{flag || (printf("%s\n",msg), exit(1), 0);}while(0)
 
+/*the child sate*/
 typedef struct child_tag
 {
 	int child_fd;
 	int child_pid;
 	int child_busy;
+	struct child_tag *m_next;
+	struct child_tag *m_head;
 }child_t, *pchild_t;
 
+/*the account infor*/
+typedef struct account
+{
+	char m_name[128];
+	char m_passwd[128];
+	int m_role;
+	struct account *m_next;
+}ACCOUNT, *pACCOUNT;
+
+/*the user's information*/
+typedef struct user_infor
+{
+	char m_name[128];
+	char m_passwd[128];
+	char m_path[128];
+	struct user_infor *m_next;
+}USER, *pUSER;
+
+
 void child_main(int fd_read);
-void make_child(pchild_t childs, int nchild, int index, int n);
+void make_child(pchild_t *phead_child, int nchild, int n);
 void handle(int fd_client);
 void send_fd(int sockfd, int fd);
 void recv_fd(int sockfd, int *fd);

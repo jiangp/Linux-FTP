@@ -4,26 +4,48 @@
   > Mail:745529725@qq.com 
   > Created Time: Mon 02 Mar 2015 04:49:19 PM CST
  ************************************************************************/
-
+#include<mysql/mysql.h>
 #include"FTP_server.h"
+#include"User_init.h"
 
 //fork  handle
 void handle(int fd_client)
 {
+	MYSQL my_connection;
 
-	//	FILE* fp_config;
-	//	char line[128] = "0"; 
-	//    
-	//	fp_config = fopen(ADDR, "r");
-	//	if(fp_config == NULL)
-	//	{
-	//		printf("open addrfile fail!\n");
-	//		exit(1);
-	//	}
-	//	memset(&line ,0, 128);
-	//	fgets(line, 128, fp_config);
-	//  line[strlen(line)-1] = '\0';
+	/*init sql porint*/
+	if(!mysql_init(&my_connection))
+	{
+		perror("mysql_init fail!\n");
+		return ;
+	}
+	/*connect mysql*/
+	if(!(mysql_real_connect(&my_connection, "localhost", "root", "666", "FTP_SQL", 3306, NULL, CLIENT_MULTI_STATEMENTS)))
+	{
+		perror("mysql_connect fail!\n");
+		mysql_close(&my_connection);
+		return ;
+	}
+	int l = User_init(&my_connection, fd_client);
+	if(l < 0)
+	{
+		printf("User_init\n"); 
+		mysql_close(&my_connection);
+		return ;
+	}
+		
 
+
+/*	the file list login
+ 	pACCOUNT account_list = NULL;
+	pUSER user_list = NULL;
+	system_init("../conf/config", &account_list, &user_list);
+	int l = User_init(&account_list, fd_client);
+	if(l < 0)
+	{
+		printf("User_init\n"); 
+		return ;
+	}*/
 	chdir("../file/");
 	/*
 	 * int epoll_fd;
@@ -56,6 +78,7 @@ void handle(int fd_client)
 		{
 			printf("one client exit.\n");
 			close(fd_client);
+			mysql_close(&my_connection);
 			break ;
 		}else
 		{	

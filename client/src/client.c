@@ -9,7 +9,7 @@
 int main(int argc ,  char *argv[])
 {
 	int fd_client;
-	char buf[1024];
+	char buf[1024]="0";
 	char line[128]= "0";
 	char name[128]= "0";
 	char stat;
@@ -23,40 +23,48 @@ int main(int argc ,  char *argv[])
 	cliaddr.sin_addr.s_addr = inet_addr(argv[1]);
 
 	MY_ASSERT(connect(fd_client, (struct sockaddr*)&cliaddr,sizeof(cliaddr)) ==0,"connect");
-	
-	printf("please change login or enroll\n");
+	/*Mysql init*/
+	printf("please change login or enroll or exit\n");
 	memset(buf ,0 , 1024);
 	fflush(stdin);
 	fgets(buf, 10, stdin);
 	buf[strlen(buf) - 1] = '\0';
-	send(fd_client, buf, sizeof(buf), 0);
+	send(fd_client, buf, 8, 0);
+	if(strncmp(buf, "exit", 4) == 0){
+		printf("exit success!\n");
+		return 0;
+	}
 	while(1){
 		printf("name: ");
 		memset(buf ,0 , 1024);
 		fflush(stdin);
 		fgets(buf, 1024, stdin);
 		buf[strlen(buf) - 1] = '\0';
-		send(fd_client, buf, sizeof(buf), 0);
+		send(fd_client, buf, 128, 0);
 
 		printf("passwd: ");
 		memset(buf ,0 , 1024);
 		fflush(stdin);
 		fgets(buf, 1024, stdin);
 		buf[strlen(buf) - 1] = '\0';
-		send(fd_client, buf, sizeof(buf), 0);
+		send(fd_client, buf, 128, 0);	
 
 		memset(buf, 0, 1024);
-		recv(fd_client, buf, sizeof(buf), 0);
-	
+		recv(fd_client, buf, 8, 0);	
 		if(strncmp(buf, "success", 7) == 0){
+			printf("success\n");
 			break;
 		}else if(strncmp(buf, "fail", 4) == 0){
 			printf("again!\n");
 			continue;
-		}else{
-			printf("33333\n");
-		} 
+		}else if(strncmp(buf, "named", 5) == 0){
+			printf("have user\n");
+			continue;
+		}else 
+			printf("oooo\n");
+			continue;
 	}
+	/*the cmd*/
 	while(1)
 	{
 		memset(buf ,0 , 1024);
