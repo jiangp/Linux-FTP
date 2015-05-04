@@ -20,13 +20,12 @@ void do_gets(int fd_client)
 	char msg[1024];
 	memset(&file_name, 0 , 128);
 	recv_buf(fd_client, (char*)&send_len, 4);
-
+	recv_buf(fd_client, file_name, send_len);
 	sprintf(name,"%s/%s",dir, file_name);
 
 	name[strlen(name) - 1] = '\0';
 	int fd_file = open(name,O_RDONLY);
-	if(fd_file == -1)
-	{
+	if(fd_file == -1){
 		perror("fd_file\n");
 		exit(1);
 	}

@@ -24,7 +24,7 @@ int main(int argc ,  char *argv[])
 
 	MY_ASSERT(connect(fd_client, (struct sockaddr*)&cliaddr,sizeof(cliaddr)) ==0,"connect");
 	/*Mysql init*/
-	printf("please change login or enroll or exit\n");
+	printf("please change login ,enroll ,vector or exit\n");
 	memset(buf ,0 , 1024);
 	fflush(stdin);
 	fgets(buf, 10, stdin);
@@ -33,90 +33,115 @@ int main(int argc ,  char *argv[])
 	if(strncmp(buf, "exit", 4) == 0){
 		printf("exit success!\n");
 		return 0;
-	}
-	while(1){
-		printf("name: ");
-		memset(buf ,0 , 1024);
-		fflush(stdin);
-		fgets(buf, 1024, stdin);
-		buf[strlen(buf) - 1] = '\0';
-		send(fd_client, buf, 128, 0);
-
-		printf("passwd: ");
-		memset(buf ,0 , 1024);
-		fflush(stdin);
-		fgets(buf, 1024, stdin);
-		buf[strlen(buf) - 1] = '\0';
-		send(fd_client, buf, 128, 0);	
-
-		memset(buf, 0, 1024);
-		recv(fd_client, buf, 8, 0);	
-		if(strncmp(buf, "success", 7) == 0){
-			printf("success\n");
-			break;
-		}else if(strncmp(buf, "fail", 4) == 0){
-			printf("again!\n");
-			continue;
-		}else if(strncmp(buf, "named", 5) == 0){
-			printf("have user\n");
-			continue;
-		}else 
-			printf("oooo\n");
-			continue;
-	}
-	/*the cmd*/
-	while(1)
-	{
-		memset(buf ,0 , 1024);
-		fgets(buf ,1024, stdin);
-		send(fd_client, buf, 1024, 0);
-		if(strncmp(buf,"ls",2)==0)//ls
-		{
-			system("clear\n");
-			while(memset(buf,0 ,sizeof(buf)),recv(fd_client, buf, sizeof(buf),0)!=-1)
-			{
-				if(strncmp(buf,"OK",2)!=0)
-				{
-					sscanf(buf, "%s %c %lu",name,&stat,&size);
-					if(stat & DT_DIR)
-						printf("    \033[34m%-30s\033[0m -------- %lu b\n",name,size);
-					else
-						printf("    %-30s -------- %lu b\n",name,size);
-				}else{
-					break;
+	
+	}else if(strncmp(buf, "vector", 5) == 0){
+		printf("you are a vector user\n");
+		while(1){
+			memset(buf ,0 , 1024);
+			fgets(buf ,1024, stdin);
+			send(fd_client, buf, 1024, 0);
+			if(strncmp(buf,"ls",2)==0){
+				while(memset(buf,0 ,sizeof(buf)),recv(fd_client, buf, sizeof(buf),0)!=-1){
+					if(strncmp(buf,"OK",2)!=0){
+						sscanf(buf, "%s %c %lu",name,&stat,&size);
+						if(stat & DT_DIR)
+							printf("    \033[34m%-30s\033[0m -------- %lu b\n",name,size);
+						else
+							printf("    %-30s -------- %lu b\n",name,size);
+					
+					}else{
+						break;
+					}
 				}
+			
+			}else if(strncmp(buf,"cd",2)==0){
+				recv(fd_client, line, sizeof(line), 0);
+				printf("%s\n", line);
+			
+			}else if(strncmp(buf,"pwd",3)==0){
+				recv(fd_client, line, sizeof(line), 0);
+				printf("%s\n",line);
+
+			}else if(strncmp(buf, "clear", 5) == 0){
+				system("clear");		
+			
+			}else{
+				printf("error command!\n");
+			
 			}
 		}
-		else if(strncmp(buf,"cd",2)==0)//cd
-		{
-		
-			recv(fd_client, line, sizeof(line), 0);
-			printf("%s\n", line);
-		}else if(strncmp(buf,"pwd",3)==0)//pwd
-		{
+	
+	}else{
+		while(1){
+			printf("name: ");
+			memset(buf ,0 , 1024);
+			fflush(stdin);
+			fgets(buf, 1024, stdin);
+			buf[strlen(buf) - 1] = '\0';
+			send(fd_client, buf, 128, 0);
 
-			recv(fd_client, line, sizeof(line), 0);
-			printf("%s\n",line);
+			printf("passwd: ");
+			memset(buf ,0 , 1024);
+			fflush(stdin);
+			fgets(buf, 1024, stdin);
+			buf[strlen(buf) - 1] = '\0';
+			send(fd_client, buf, 128, 0);	
 
-		}else if(strncmp(buf,"gets",4)==0)//gets
-		{
-			client_gets(fd_client);
-
-		}else if(strncmp(buf,"puts",4)==0)
-		{
-            client_puts(fd_client);
-
-		}else if(strncmp(buf,"remove",6)==0)
-		{
+			memset(buf, 0, 1024);
+			recv(fd_client, buf, 8, 0);	
+			if(strncmp(buf, "success", 7) == 0){
+				printf("success\n");
+				break;
+			}else if(strncmp(buf, "fail", 4) == 0){
+				printf("again!\n");
+				continue;
+			}else if(strncmp(buf, "named", 5) == 0){
+				printf("have user\n");
+				continue;
+			}
+		}	
+		/*the cmd*/
+		while(1){
+			memset(buf ,0 , 1024);
+			fgets(buf ,1024, stdin);
+			send(fd_client, buf, 1024, 0);
+			if(strncmp(buf,"ls",2)==0){
+				while(memset(buf,0 ,sizeof(buf)),recv(fd_client, buf, sizeof(buf),0)!=-1){
+					if(strncmp(buf,"OK",2)!=0){
+						sscanf(buf, "%s %c %lu",name,&stat,&size);
+						if(stat & DT_DIR)
+							printf("    \033[34m%-30s\033[0m -------- %lu b\n",name,size);
+						else
+							printf("    %-30s -------- %lu b\n",name,size);
+					
+					}else{
+						break;
+					}
+				}
+			}else if(strncmp(buf,"cd",2)==0){
+				recv(fd_client, line, sizeof(line), 0);
+				printf("%s\n", line);
 			
-			client_remove(fd_client);
+			}else if(strncmp(buf,"pwd",3)==0){
+				recv(fd_client, line, sizeof(line), 0);
+				printf("%s\n",line);
 
-		}else if(strncmp(buf, "clear", 5) == 0)
-		{
-			system("clear");		
-		}
-		else{
-			printf("error command!\n");
+			}else if(strncmp(buf,"gets",4)==0){
+				client_gets(fd_client);
+
+			}else if(strncmp(buf,"puts",4)==0){
+				client_puts(fd_client);
+
+			}else if(strncmp(buf,"remove",6)==0){
+				client_remove(fd_client);
+
+			}else if(strncmp(buf, "clear", 5) == 0){
+				system("clear");		
+			
+			}
+			else{
+				printf("error command!\n");
+			}
 		}
 	}
 	return 0;
