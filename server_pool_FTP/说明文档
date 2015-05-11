@@ -1,0 +1,12 @@
+主要你就配个数据库 改一下mysql连接参数就可以  在src的handle.c文件里  
+
+数据库名：FTP_SQL 表名：ACCOUNT 数据库列名: Id（自动增长的） Name, Passwd, Role, Path
+ 登陆模块在头文件的user_init.h 有login， enroll， vector和exit四部分
+有
+有 ls  pwd remove gets puts cd 的功能 目前只有下载可以下文件夹，上传还没加进去，只可以传文件
+
+客户端是和server配套的 只能用这个客户端连接， 
+
+我是用动态进程池写的 运行时 ./mian.o ip port num , 客户端 ./main.o ip port
+
+

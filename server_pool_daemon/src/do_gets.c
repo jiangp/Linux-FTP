@@ -30,9 +30,9 @@ void do_gets(int fd_client)
 		perror("fd_file\n");
 		exit(1);
 	}
-	while(memset(&msg,0,1024), (recv_len = read(fd_file, msg, 1024) )!= 0)
+	while(memset(&msg,0,1024), (send_len = read(fd_file, msg, 1024) )!= 0)
 	{
-		if(recv_len ==-1){
+		if(send_len ==-1){
 
 			perror("read\n");
 			exit(1);

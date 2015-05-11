@@ -23,6 +23,7 @@ int main(int argc ,  char *argv[])
 	cliaddr.sin_addr.s_addr = inet_addr(argv[1]);
 
 	MY_ASSERT(connect(fd_client, (struct sockaddr*)&cliaddr,sizeof(cliaddr)) ==0,"connect");
+	chdir("../file");
 	/*Mysql init*/
 	printf("please change login ,enroll ,vector or exit\n");
 	memset(buf ,0 , 1024);
