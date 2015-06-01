@@ -27,9 +27,17 @@
 #define MY_ASSERT(flag, msg) do{flag || (printf("%s\n",msg), exit(1), 0);}while(0)	
 
 
+void do_init(int fd_client);
+void user_login(int fd_client);
+void do_commind(int fd_client);
+void vector_do_commind(int fd_client);
+void client_cd(int fd_client);
 void client_gets(int fd_client);
 void client_puts(int fd_client);
 void client_remove(int fd_client);
+void client_mkdir(int fd_client);
+void client_rmdir(int fd_client);
+void do_cd(char *buf);
 int send_buf(int sfd, char *buf, int len);
 int recv_buf(int sfd, char *buf, int len);
 #endif

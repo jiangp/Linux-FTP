@@ -8,24 +8,75 @@
 #include"FTP_server.h"
 
 //remove
-int do_remove(int fd_client)
+void do_remove(int fd_client, char *buf)
 {
-	char dir[128] = "0";
-	getcwd(dir, sizeof(dir));
-	int recv_len ;
-	char name[128] = "0";
-	char file_name[128] = "0";
-	recv_buf(fd_client, (char*)&recv_len, 4);
-	recv_buf(fd_client, file_name, recv_len);
-
-	sprintf(name,"%s/%s",dir,file_name);
-	name[strlen(name)-1] = '\0';
-
-	remove(name);
-	recv_buf(fd_client, (char*)&recv_len, 4);
-	if(recv_len == 0)
-	{
-		return 0;
+	int buf_cnt, index;
+	char filename[128] = "0";
+	for(buf_cnt = 6; buf_cnt < 128; ++buf_cnt){
+		if(buf[buf_cnt] == ' ')
+			continue;
+		for(index = 0; index < 123; ++index){
+			filename[index] = buf[buf_cnt];
+			++buf_cnt;
+		}
 	}
-	return 0;	
+	filename[strlen(filename) - 1] ='\0';
+	if(access(filename, 0) == 0){
+		remove(filename);
+		send(fd_client, "success", 8, 0);
+	}
+	else{
+		send(fd_client, "no file", 8, 0);
+	}
+	
 }
+
+
+//mkdir
+void do_mkdir(int fd_client, char *buf)
+{
+	int buf_cnt, index;
+	char dirname[128] = "0";
+	for(buf_cnt = 6; buf_cnt < 128; ++buf_cnt){
+		if(buf[buf_cnt] == ' ')
+			continue;
+		for(index = 0; index < 123; ++index){
+			dirname[index] = buf[buf_cnt];
+			++buf_cnt;
+		}
+	}
+	dirname[strlen(dirname) - 1] ='\0';
+	if(access(dirname, 0) == -1){
+		if(mkdir(dirname, 0777) == 0){
+			send(fd_client, "sucess", 8, 0);
+		}else{
+			send(fd_client, "fail", 8, 0);
+		}
+	}else{
+		send(fd_client, "have", 8, 0);
+	}
+}
+//rmdir
+void do_rmdir(int fd_client, char *buf)
+{
+	int buf_cnt, index;
+	char dirname[128] = "0";
+	char rmdir_cmd[128] = "0";
+	for(buf_cnt = 6; buf_cnt < 128; ++buf_cnt){
+		if(buf[buf_cnt] == ' ')
+			continue;
+		for(index = 0; index < 123; ++index){
+			dirname[index] = buf[buf_cnt];
+			++buf_cnt;
+		}
+	}
+	dirname[strlen(dirname) - 1] ='\0';
+	if(access(dirname, 0) == 0){
+		sprintf(rmdir_cmd, "%s %s", "rm -rf", dirname);
+		system(rmdir_cmd);
+		send(fd_client, "success", 8, 0);
+	}else{
+		send(fd_client, "no dir", 8, 0);
+	}
+}
+

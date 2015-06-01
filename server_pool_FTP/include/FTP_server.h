@@ -62,10 +62,12 @@ void send_fd(int sockfd, int fd);
 void recv_fd(int sockfd, int *fd);
 void do_ls(int fd_client);
 void do_pwd(int fd_client);
-void do_cd(int fd_client, char* buf,int len);
+void do_cd(int fd_client, char *buf);
 void do_gets(int fd_client);
 void do_puts(int fd_client);
-int do_remove(int fd_client);
+void do_remove(int fd_client, char *buf);
+void do_mkdir(int fd_client, char *buf);
+void do_rmdir(int fd_client, char *buf);
 int send_buf(int sfd, char *buf, int len);
 int recv_buf(int sfd, char *buf, int len);
 

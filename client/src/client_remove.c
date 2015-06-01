@@ -10,19 +10,68 @@
 //client_remove
 void client_remove(int fd_client)
 {
-	int send_len ;
-	char file_name[128] = "0";
-	printf("please input dele file_name:\n");
-	fflush(stdin);
-	fgets(file_name, 128, stdin);
-
-    send_len = strlen(file_name);
-	send_buf(fd_client, (char*)&send_len, 4);
-	send_buf(fd_client, file_name, send_len);
-
-	printf("remove over!\n");
-	send_len = 0;
-	send_buf(fd_client,(char*)&send_len,4);
+	char buf[8] = "0";
+	recv(fd_client, buf, sizeof(buf), 0);
+	if(strncmp(buf, "no file", 7) == 0)
+		printf("no the name's file!\n");
+	else
+		return ;
 }
 
 
+
+//clinet_mkdir
+void client_mkdir(int fd_client)
+{
+	char buf[8] = "0";
+	recv(fd_client, buf, sizeof(buf), 0);
+	if(strncmp(buf, "have", 6) == 0)
+		printf("have the name's dirent!\n");
+	else if(strncmp(buf, "fail",4) == 0)
+		printf("you dont have permition!\n");
+	else if(strncmp(buf, "success", 7) == 0)
+		return ;
+}
+
+
+//client_rmdir
+void client_rmdir(int fd_client)
+{
+	char buf[8] = "0";
+	recv(fd_client, buf, sizeof(buf), 0);
+	if(strncmp(buf, "no dir", 6) == 0)
+		printf("no the name's dirent!\n");
+	else
+		return ;
+}
+
+//client_cd
+void client_cd(int fd_client)
+{
+	char buf[8] = "0";
+	recv(fd_client, buf, sizeof(buf), 0);
+	if(strncmp(buf, "have", 6) == 0)
+		printf("have the top dir!\n");
+	else if(strncmp(buf, "error",5) == 0)
+		printf("the commind error!\n");
+	else if(strncmp(buf, "ready", 5) == 0)
+		return ;
+}
+
+//client_!cd
+void do_cd(char *buf)
+{
+	int index, jndex;
+	char path[128] = "0";
+	for(jndex = 4; jndex != 128; ++jndex){
+		if(buf[jndex] == ' ')
+			continue;
+		for(index = 0; index != 124; ++index){
+			path[index] = buf[jndex]; 
+			++jndex;
+		}
+		break;
+	}
+	path[strlen(path)-1] = '\0';				
+	chdir(path);
+}

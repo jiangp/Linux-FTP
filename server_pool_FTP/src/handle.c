@@ -70,21 +70,25 @@ void handle(int fd_client)
 				do_puts(fd_client);
 			
 			}
-			else if(strncmp(buf, "cd", 2) ==0 ){
-				do_cd(fd_client,buf,strlen(buf));
+			else if(strncmp(buf, "cd", 2) == 0 ){
+				do_cd(fd_client, buf);
 			
 			}
-			else if(strncmp(buf,"pwd",3) == 0){
+			else if(strncmp(buf, "pwd", 3) == 0){
 				do_pwd(fd_client);
 			
 			}
 			else if(strncmp(buf, "remove", 6) == 0){
-				do_remove(fd_client);
+				do_remove(fd_client, buf);
 			
 			}
-			else{
-				continue;
+			else if(strncmp(buf, "mkdir", 5) == 0){
+				do_mkdir(fd_client, buf);
 			
+			}
+			else if(strncmp(buf, "rmdir", 5) == 0){
+				do_rmdir(fd_client, buf);
+
 			}
 		}
 	}	
