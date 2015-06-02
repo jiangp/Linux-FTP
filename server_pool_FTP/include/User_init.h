@@ -1,5 +1,5 @@
 /*************************************************************************
-  > File Name:User_init.
+  > File Name:User_init.h
   > Author: Arwen
   > Mail:745529725@qq.com 
   > Created Time: Mon 27 Apr 2015 12:44:18 PM CST
@@ -23,7 +23,7 @@
  * when enroll first find from ACCOUNT tables 
  * of haven't insert a new user and create a dir name user_name
  * */
-int User_init(MYSQL *my_connection, int fd_client)
+char *User_init(MYSQL *my_connection, int fd_client)
 {
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
@@ -37,36 +37,31 @@ int User_init(MYSQL *my_connection, int fd_client)
 	
 	recv(fd_client, role, sizeof(role), 0);
 	if(strncmp(role, "vector", 6) == 0){
-		return 3;
+		return "vector";
 	
 	}else if(strncmp(role, "login", 5) == 0){
 		while(cnt < 3){
 			recv(fd_client, user_name, sizeof(user_name), 0);
 			recv(fd_client, user_passwd, sizeof(user_passwd), 0);
-//			printf("%s:%s\n", user_name, user_passwd);
 			strcpy(query, "SELECT * from ACCOUNT where Name='");
 			strcat(query, user_name);
 			strcat(query, "';");
-//			printf("%s\n",query);
 			res = mysql_query(my_connection, query);
 			if(!res){
 				result = mysql_store_result(my_connection);
 				if(result){
 					sql_row = mysql_fetch_row(result);
 					if(sql_row){
-//						printf("%s\n", sql_row[2]);
 						if(strcmp(sql_row[2], user_passwd) == 0){
 							send(fd_client, "success", 8, 0);
-							return (*sql_row[3]);
+							return user_name;
 						
 						}else{
-//							printf("passwd eror \n");
 							send(fd_client, "fail", 8, 0);
 							cnt++;	
 						}
 					}
 					else{
-//						printf("no name\n");
 						send(fd_client, "fail", 8, 0);
 						cnt++;
 					}
@@ -79,12 +74,10 @@ int User_init(MYSQL *my_connection, int fd_client)
 			memset(&user_passwd, 0, 128);
 			recv(fd_client, user_name, sizeof(user_name), 0);
 			recv(fd_client, user_passwd, sizeof(user_passwd), 0);
-//			printf("%s:%s\n", user_name, user_passwd);
 
 			strcpy(query, "SELECT * from ACCOUNT where Name='");
 			strcat(query, user_name);
 			strcat(query, "';");
-//			printf("%s\n",query);
 			res = mysql_query(my_connection, query);
 			if(!res){
 				result = mysql_store_result(my_connection);
@@ -99,7 +92,7 @@ int User_init(MYSQL *my_connection, int fd_client)
 				}
 			}
 			memset(&query, 0, 1024);
-			strcpy(path, "./.user_file/.");
+			strcpy(path, "/mnt/user_file/.");
 			strcat(path, user_name);
 			int flag0  = mkdir(path, 0700);
 			if(flag0 != 0){
@@ -122,11 +115,11 @@ int User_init(MYSQL *my_connection, int fd_client)
 			
 			}else{
 				send(fd_client, "success", 8, 0);
-//				printf("success\n");
-				return 2;
+				printf("success\n");
+				return user_name;
 			
 			}
 		}
 	}
-	return -1;
+	return NULL;
 }

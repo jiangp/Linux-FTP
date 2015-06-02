@@ -22,17 +22,17 @@ void do_init(int fd_client)
 	}else if(strncmp(buf, "vector", 5) == 0){
 		printf("you are a vector user\n");
 	    /*the cmd*/
-		vector_do_commind(fd_client);
+		do_commind(fd_client, 3);
 	}else{
 		/*the login*/
 		user_login(fd_client);
 		/*the cmd*/
-		do_commind(fd_client);
+		do_commind(fd_client, 1);
 	}
 	
 }
 
-void do_commind(int fd_client)
+void do_commind(int fd_client, int role)
 {
 	char buf[1024] = "0";
 	char line[1024] = "0";
@@ -70,23 +70,23 @@ void do_commind(int fd_client)
 
 		}
 		else if(strncmp(buf, "gets", 4) == 0){
-			client_gets(fd_client);
+			client_gets(fd_client, role);
 
 		}
 		else if(strncmp(buf, "puts", 4) == 0){
-			client_puts(fd_client);
+			client_puts(fd_client, role);
 
 		}
 		else if(strncmp(buf, "remove", 6) == 0){
-			client_remove(fd_client);
+			client_remove(fd_client, role);
 
 		}
 		else if(strncmp(buf, "mkdir", 5) == 0){
-			client_mkdir(fd_client);	
+			client_mkdir(fd_client, role);	
 
 		}
 		else if(strncmp(buf, "rmdir", 5) == 0){
-			client_rmdir(fd_client);
+			client_rmdir(fd_client, role);
 
 		}
 		else if(strncmp(buf, "clear", 5) == 0){
@@ -109,106 +109,19 @@ void do_commind(int fd_client)
 			return ;
 
 		}
-		else{
-			printf("error command!\n");
+		else if(strncmp(buf, "home", 4) == 0){
+		
 		}
-	}
-}
-
-void vector_do_commind(int fd_client)
-{
-	char buf[1024] = "0";
-	char line[1024] = "0";
-	char name[128] = "0";
-	unsigned long size;
-	char stat;
-
-	while(1){
-		memset(buf , 0, 1024);
-		memset(line, 0, 1024);
-		fgets(buf, 1024, stdin);
-
-		if(strncmp(buf, "ls", 2) == 0){
-			send(fd_client, buf, 1024, 0);
-			while(memset(buf,0 ,sizeof(buf)),recv(fd_client, buf, sizeof(buf),0)!=-1){
-				if(strncmp(buf,"OK",2)!=0){
-					sscanf(buf, "%s %c %lu",name,&stat,&size);
-					if(stat & DT_DIR)
-						printf("    \033[34m%-30s\033[0m -------- %lu b\n",name,size);
-					else
-						printf("    %-30s -------- %lu b\n",name,size);
-
-				}else{
-					break;
-				}
-			}
-		}
-		else if(strncmp(buf, "cd", 2) == 0){
-			send(fd_client, buf, 1024, 0);
-			recv(fd_client, line, sizeof(line), 0);
-
-		}
-		else if(strncmp(buf, "pwd", 3) == 0){
-			send(fd_client, buf, 1024, 0);
-			recv(fd_client, line, sizeof(line), 0);
-			printf("%s\n",line);
-
-/*		}
- *		else if(strncmp(buf, "gets", 4) == 0){
-			send(fd_client, buf, 1024, 0);
-			client_gets(fd_client);
-
-		}
-		else if(strncmp(buf, "puts", 4) == 0){
-			send(fd_client, buf, 1024, 0);
-			client_puts(fd_client);
-
-		}
-		else if(strncmp(buf, "remove", 6) == 0){
-			send(fd_client, buf, 1024, 0);
-			client_remove(fd_client);
-
-		}
-		else if(strncmp(buf, "mkdir", 5) == 0){
-			send(fd_client, buf, 1024, 0);
-			//	client_mkdir(fd_client);
-
-		}
-		else if(strncmp(buf, "rmdir", 5) == 0){
-			send(fd_client, buf, 1024, 0);
-			//	client_rmdir(fd_client);
-*/
-		}
-		else if(strncmp(buf, "clear", 5) == 0){
-			send(fd_client, buf, 1024, 0);
-			system("clear");		
-
-		}
-		else if(strncmp(buf, "!ls", 3) == 0){
-			send(fd_client, buf, 1024, 0);
-			system("ls");
-
-		}
-		else if(strncmp(buf, "!cd", 3) == 0){
-			send(fd_client, buf, 1024, 0);
-			do_cd(buf);
-
-		}
-		else if(strncmp(buf, "!pwd", 4) == 0){
-			send(fd_client, buf, 1024, 0);
-			printf("%s\n",getcwd(NULL, 0));
-
-		}
-		else if(strncmp(buf, "quit", 4) == 0){
-			send(fd_client, buf, 1024, 0);
-			return ;
-
+		else if(strncmp(buf, "person", 6) == 0){
+			client_person(role);
 		}
 		else{
 			printf("error command!\n");
 		}
 	}
 }
+
+
 
 void user_login(int fd_client)
 {

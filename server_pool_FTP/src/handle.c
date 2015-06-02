@@ -7,13 +7,13 @@
 #include<mysql/mysql.h>
 #include"FTP_server.h"
 #include"User_init.h"
-
 //fork  handle
 void handle(int fd_client)
 {
 	chdir("../file/");
 	MYSQL my_connection;
-
+	MYSQL_RES *result;
+	MYSQL_ROW sql_row;
 	/*init sql porint*/
 	if(!mysql_init(&my_connection)){
 		perror("mysql_init fail!\n");
@@ -29,14 +29,32 @@ void handle(int fd_client)
 		return ;
 	
 	}
-//	int l = User_init(&my_connection, fd_client);
-	if(User_init(&my_connection, fd_client) < 0){
+	char query[128] = "0";
+	int res;
+	char *UserName = User_init(&my_connection, fd_client);
+	if(UserName == NULL){
 		printf("User_init\n"); 
 		mysql_close(&my_connection);
 		return ;
 	}
-		
-
+	else if(strncmp(UserName, "vector", 6) == 0){
+		printf("Is a vector!\n");
+		ServerCmd(fd_client, "path", 3);
+	}
+	else{
+		sprintf(query, "%s%s%s", "SELECT * from ACCOUNT where Name='", UserName, "';");
+//		printf("%s\n", query);
+		res = mysql_query(&my_connection, query);
+		if(!res){
+			result = mysql_store_result(&my_connection);
+			if(result){
+				sql_row = mysql_fetch_row(result);
+				ServerCmd(fd_client, sql_row[4], atoi(sql_row[3]));
+			}
+		}
+	}
+	mysql_close(&my_connection);	
+}
 
 /*	the file list login
  	pACCOUNT account_list = NULL;
@@ -47,27 +65,28 @@ void handle(int fd_client)
 		printf("User_init\n"); 
 		return ;
 	}*/
-
+void ServerCmd(int fd_client, char *path, int role)
+{
+	char buf[1024] = "0";
 	while(1)
 	{
-		char buf[1024] = "0";
 		memset(buf, 0 ,1024);
 		if(recv(fd_client, buf, sizeof(buf), 0) == 0){
 			printf("one client exit.\n");
 			close(fd_client);
-			mysql_close(&my_connection);
 			break ;
 		
 		}else{	
 			if(strncmp(buf, "ls", 2) == 0){
 				do_ls(fd_client);
+			
 			}
 			else if(strncmp(buf, "gets", 4) == 0){
-				do_gets(fd_client);
-
+				 do_gets(fd_client, role);
+				
 			}
 			else if(strncmp(buf, "puts", 4) == 0){
-				do_puts(fd_client);
+				do_puts(fd_client, role);
 			
 			}
 			else if(strncmp(buf, "cd", 2) == 0 ){
@@ -79,16 +98,24 @@ void handle(int fd_client)
 			
 			}
 			else if(strncmp(buf, "remove", 6) == 0){
-				do_remove(fd_client, buf);
+				do_remove(fd_client, buf, role);
 			
 			}
 			else if(strncmp(buf, "mkdir", 5) == 0){
-				do_mkdir(fd_client, buf);
+				do_mkdir(fd_client, buf, role);
 			
 			}
 			else if(strncmp(buf, "rmdir", 5) == 0){
-				do_rmdir(fd_client, buf);
+				do_rmdir(fd_client, buf, role);
 
+			}
+			else if(strncmp(buf, "home", 5) == 0){
+				chdir("mnt/file/");
+			
+			}
+			else if(strncmp(buf, "person",6) == 0){
+				do_person(role, path);
+			
 			}
 		}
 	}	

@@ -10,8 +10,11 @@
 void downDir(int fd_client, char *);
 void downFile(int fd_client, char *);
 //do_gets
-void do_gets(int fd_client)
+void do_gets(int fd_client, int role)
 {
+	if(role == 3){
+		return ;
+	}else{
 	struct stat mystat;
 	int send_len;
 	char file_name[256]="0";
@@ -32,7 +35,7 @@ void do_gets(int fd_client)
 	}
 	printf("send complient!\n");
 }
-
+}
 
 
 void downDir(int fd_client, char *dir_name)

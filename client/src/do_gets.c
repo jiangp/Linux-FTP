@@ -10,45 +10,48 @@
 void down_dir(int fd_client, char *dir_name);
 void down_file(int fd_client, char *name);
 //client_gets
-void client_gets(int fd_client)
+void client_gets(int fd_client, int role)
 {
+	if(role == 3){
+		printf("you don't have permission!\n");
+		return;
+	}else{
+		int send_len ;
+		char name[256] = "0";
+		char msg[1024] = "0";
+		char dir[8] = "0";
+		memset(&name, 0 ,256);
+		printf("please input the down filed:\n");
+		fflush(stdin);
+		fgets(msg ,128, stdin);
+		send_len = strlen(msg);
+		send_buf(fd_client, (char*)&send_len, 4);
+		send_buf(fd_client, msg, send_len);
+		printf("pleace call in down file's name:\n");
+		fflush(stdin);
+		fgets(name, 128, stdin);
+		name[strlen(name) - 1] = '\0';
+		recv(fd_client, dir, 8 , 0);
 
-	int send_len ;
-	char name[256] = "0";
-	char msg[1024] = "0";
-	char dir[8] = "0";
-	memset(&name, 0 ,256);
-	printf("please input the down filed:\n");
-	fflush(stdin);
-	fgets(msg ,128, stdin);
-	send_len = strlen(msg);
-	send_buf(fd_client, (char*)&send_len, 4);
-	send_buf(fd_client, msg, send_len);
-	printf("pleace call in down file's name:\n");
-	fflush(stdin);
-	fgets(name, 128, stdin);
-	name[strlen(name) - 1] = '\0';
-	recv(fd_client, dir, 8 , 0);
+		if(strncmp(dir, "dir", 3) == 0){
+			if(-1 == mkdir(name, 0777)){
+				perror("makedir!\n");
+				exit(1);
+			}
 
-	if(strncmp(dir, "dir", 3) == 0){
-		if(-1 == mkdir(name, 0777)){
-			perror("makedir!\n");
-			exit(1);
+			if(-1 == chdir(name)){
+				perror("chdir!\n");
+				exit(1);
+			}
+			down_dir(fd_client, name);
+			//		chdir("..");
+			printf("break a dir!\n");
 		}
-
-		if(-1 == chdir(name)){
-			perror("chdir!\n");
-			exit(1);
+		else{
+			down_file(fd_client, name);
 		}
-		down_dir(fd_client, name);
-//		chdir("..");
-		printf("break a dir!\n");
+		printf("recv complient!\n");
 	}
-	else{
-		down_file(fd_client, name);
-	}
-	printf("recv complient!\n");
-	
 }
 
 void down_dir(int fd_client, char *dir_name)
@@ -68,7 +71,7 @@ void down_dir(int fd_client, char *dir_name)
 		else if(strncmp(dir, "dir", 3) == 0){
 			memset(name, 0, 256);
 			recv(fd_client, name, 256, 0);
-//			printf("%s: %d\n", name, sizeof(name));
+			//			printf("%s: %d\n", name, sizeof(name));
 			mkdir(name, 0777);
 			chdir(name);
 			down_dir(fd_client, name);

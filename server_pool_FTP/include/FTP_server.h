@@ -58,16 +58,18 @@ typedef struct user_infor
 void child_main(int fd_read);
 void make_child(pchild_t *phead_child, int nchild, int n);
 void handle(int fd_client);
+void ServerCmd(int fd_client, char *path, int role);
 void send_fd(int sockfd, int fd);
 void recv_fd(int sockfd, int *fd);
 void do_ls(int fd_client);
 void do_pwd(int fd_client);
 void do_cd(int fd_client, char *buf);
-void do_gets(int fd_client);
-void do_puts(int fd_client);
-void do_remove(int fd_client, char *buf);
-void do_mkdir(int fd_client, char *buf);
-void do_rmdir(int fd_client, char *buf);
+void do_gets(int fd_client, int role);
+void do_puts(int fd_client, int role);
+void do_remove(int fd_client, char *buf, int role);
+void do_mkdir(int fd_client, char *buf, int role);
+void do_rmdir(int fd_client, char *buf, int role);
+void do_person(int role, char *path);
 int send_buf(int sfd, char *buf, int len);
 int recv_buf(int sfd, char *buf, int len);
 

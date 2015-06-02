@@ -7,8 +7,11 @@
 
 #include"FTP_server.h"
 //do_puts
-void do_puts(int fd_client)
+void do_puts(int fd_client, int role)
 {
+	if(role == 3){
+		return ;
+	}else{
 	char dir[128] = "0";
 	getcwd(dir, sizeof(dir));
 	int recv_len ;
@@ -44,4 +47,5 @@ void do_puts(int fd_client)
 	}
 	printf("recv complient!\n");
 
+}
 }
