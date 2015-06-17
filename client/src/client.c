@@ -8,6 +8,7 @@
 #include"FTP_client.h"
 int main(int argc ,  char *argv[])
 {
+//  config("../confg"); 
 	int fd_client;
 	MY_ASSERT((fd_client = socket(AF_INET,SOCK_STREAM ,0))!=-1 ,"listen socket init");
 	struct sockaddr_in cliaddr;
