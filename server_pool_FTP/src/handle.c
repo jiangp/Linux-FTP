@@ -110,7 +110,7 @@ void ServerCmd(int fd_client, char *path, int role)
 
 			}
 			else if(strncmp(buf, "home", 5) == 0){
-				chdir("mnt/file/");
+				chdir("/mnt/file/");
 			
 			}
 			else if(strncmp(buf, "person",6) == 0){
