@@ -7,10 +7,12 @@
 #include<mysql/mysql.h>
 #include"FTP_server.h"
 #include"User_init.h"
+#define HomePath "/home/arwen/program/Project_FTP/server_pool_FTP/file"
+
 //fork  handle
 void handle(int fd_client)
 {
-	chdir("../file/");
+	chdir(HomePath);
 	MYSQL my_connection;
 	MYSQL_RES *result;
 	MYSQL_ROW sql_row;
@@ -109,11 +111,11 @@ void ServerCmd(int fd_client, char *path, int role)
 				do_rmdir(fd_client, buf, role);
 
 			}
-			else if(strncmp(buf, "home", 5) == 0){
-				chdir("/mnt/file/");
+			else if(strncmp(buf, "home", 4) == 0){
+				chdir(HomePath);
 			
 			}
-			else if(strncmp(buf, "person",6) == 0){
+			else if(strncmp(buf, "person", 6) == 0){
 				do_person(role, path);
 			
 			}

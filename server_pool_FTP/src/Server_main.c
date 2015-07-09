@@ -18,6 +18,7 @@ int main(int argc ,  char *argv[])
 		exit(1);
 	}
 	int nchild = atoi(argv[3]);
+
 	/*system_init*/
 //	pACCOUNT account_list = NULL;
 //	pUSER user_list = NULL;
@@ -43,8 +44,8 @@ int main(int argc ,  char *argv[])
 
 	int i, cnt;
 	while(1)
-	{	/*消息队列 ， epoll_wait*/
-	
+	{
+		/*消息队列 ， epoll_wait*/
 		memset(&my_events, 0, sizeof(my_events));
 		if((ready_events = epoll_wait(ep_fd, my_events, 1024, -1)) == -1){
 			perror("epoll_wait\n");
@@ -56,9 +57,9 @@ int main(int argc ,  char *argv[])
 			int fd = my_events[i].data.fd;		
 			if(fd == fd_listen){
 				sock_len = sizeof(clientaddr);
-				memset(&clientaddr, 0 ,sock_len);
-				fd_client = accept(fd_listen , (struct sockaddr*)&clientaddr ,&sock_len );
-				printf("client %s:%d connect!\n",inet_ntoa(clientaddr.sin_addr),ntohs(clientaddr.sin_port));
+				memset(&clientaddr, 0, sock_len);
+				fd_client = accept(fd_listen , (struct sockaddr*)&clientaddr, &sock_len );
+				printf("client %s:%d connect!\n", inet_ntoa(clientaddr.sin_addr), ntohs(clientaddr.sin_port));
 
 				/*find the list who child_busy is free
 				 * if the free num small 3 create 5 process*/

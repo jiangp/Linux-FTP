@@ -6,7 +6,7 @@
  ************************************************************************/
 
 #include"FTP_server.h"
-//#include<fcntl.h>
+
 /*create process pool*/
 void make_child(pchild_t childs, int nchild)
 {
@@ -14,18 +14,18 @@ void make_child(pchild_t childs, int nchild)
 	while(nchild > 0)
 	{
 		int fds[2];
-		if(-1 == socketpair(AF_LOCAL, SOCK_STREAM, 0, fds))
-		{
+		if(-1 == socketpair(AF_LOCAL, SOCK_STREAM, 0, fds)){
 			perror("socketpair!\n");
 			exit(1);
 		}
+
 		pid_t pid = fork();
-		if(pid == 0)
-		{	
+		if(pid == 0){	
 			close(fds[1]);
 			child_main(fds[0]);
 			exit(1);
 		}
+
 		close(fds[0]);
 		childs[index].child_pid = pid;
 		childs[index].child_fd = fds[1];

@@ -10,7 +10,8 @@
 //main
 int main(int argc ,  char *argv[])
 {
-	if(argc != 4){/*EXE ,IP, PORT, ProcessPoolNum*/
+	/*executive, IP, PORT, ProcessPoolNum*/
+	if(argc != 4){
 		perror("EXE Ip Port Nchild! \n");
 		exit(1);
 	}
@@ -24,7 +25,6 @@ int main(int argc ,  char *argv[])
 	/*Create socker */
 	int fd_listen, fd_client;
 	MY_ASSERT((fd_listen = socket(AF_INET, SOCK_STREAM , 0)) != -1 , "listen socket init");//socket
-
 
 	struct sockaddr_in seraddr, clientaddr;
 	socklen_t sock_len = sizeof(clientaddr);
@@ -60,7 +60,8 @@ int main(int argc ,  char *argv[])
 		fcntl(parr[index].child_fd, F_SETFL,FNDELAY);
 
 	while(1)
-	{	/*wait the accept mag*/
+	{	
+		/*wait the accept mag*/
 		memset(&my_events, 0 ,sizeof(my_events));
 		ready_events = epoll_wait(ep_fd, my_events, 1024, -1);//epoll_wait
 		if(ready_events == -1){
@@ -72,7 +73,6 @@ int main(int argc ,  char *argv[])
 		for(i = 0; i < ready_events; ++i)
 		{
 			int fd = my_events[i].data.fd;
-		
 			if(fd == fd_listen){
 				sock_len =sizeof(clientaddr);
 				memset(&clientaddr, 0 ,sock_len);
@@ -90,16 +90,19 @@ int main(int argc ,  char *argv[])
 					}
 				}
 
-				/* search the child who is free
+				/*
+				 * search the child who is free
 				 * if find the first one break
 				 * */
 				for(index = 0; index < nchild; ++index){
 					if(parr[index].child_busy == 0)
 						break;
 				}
+
 				/*if have no free fork  wait again*/
 				if(index == nchild)
 					continue;
+				
 				/*send mag to son fork 
 				 * let the station is busy*/  
 				send_fd(parr[index].child_fd, fd_client);
@@ -107,12 +110,10 @@ int main(int argc ,  char *argv[])
 			}
 			
 
-
 		}
 	}
-	
+//	wait()
 	close(ep_fd);
-
 }
 
 

@@ -56,29 +56,29 @@ void child_main(int fd_client)
 				break ;
 			}else
 			{	
-				if(strncmp(buf,"ls",2) == 0)
+				if(strncmp(buf, "ls", 2) == 0)
 				{
 					do_ls(fd_client);
 				}
-				else if(strncmp(buf,"gets",4) == 0)
+				else if(strncmp(buf, "gets", 4) == 0)
 				{
 				
 					do_gets(fd_client);
 
 				}
-				else if(strncmp(buf, "puts",4) == 0)
+				else if(strncmp(buf, "puts", 4) == 0)
 				{
 				
 					do_puts(fd_client);
 				}
-				else if(strncmp(buf,"cd",2) ==0 )
+				else if(strncmp(buf, "cd", 2) == 0)
 				{
-		     		do_cd(fd_client,buf,strlen(buf));
+		     		do_cd(fd_client, buf, strlen(buf));
 				}
-				else if(strncmp(buf,"pwd",3) == 0)
+				else if(strncmp(buf, "pwd", 3) == 0)
 				{
 					do_pwd(fd_client);
-				}else if(strncmp(buf,"remove",6) == 0)			
+				}else if(strncmp(buf, "remove", 6) == 0)			
 				{
 				
 					do_remove(fd_client);

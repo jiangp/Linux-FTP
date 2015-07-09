@@ -13,7 +13,6 @@ void do_gets(int fd_client)
 	char dir[128] ="0";
 	getcwd(dir,sizeof(dir));
 
-	int recv_len;
 	int send_len;
 	char file_name[128]="0";
 	char name[128] ="0";

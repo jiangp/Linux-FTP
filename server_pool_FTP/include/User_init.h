@@ -36,10 +36,12 @@ char *User_init(MYSQL *my_connection, int fd_client)
 	char query[1024] = "0";
 	
 	recv(fd_client, role, sizeof(role), 0);
+
 	if(strncmp(role, "vector", 6) == 0){
 		return "vector";
 	
 	}else if(strncmp(role, "login", 5) == 0){
+
 		while(cnt < 3){
 			recv(fd_client, user_name, sizeof(user_name), 0);
 			recv(fd_client, user_passwd, sizeof(user_passwd), 0);
@@ -47,6 +49,7 @@ char *User_init(MYSQL *my_connection, int fd_client)
 			strcat(query, user_name);
 			strcat(query, "';");
 			res = mysql_query(my_connection, query);
+
 			if(!res){
 				result = mysql_store_result(my_connection);
 				if(result){
@@ -56,7 +59,8 @@ char *User_init(MYSQL *my_connection, int fd_client)
 							send(fd_client, "success", 8, 0);
 							return user_name;
 						
-						}else{
+						}
+						else{
 							send(fd_client, "fail", 8, 0);
 							cnt++;	
 						}
@@ -68,7 +72,9 @@ char *User_init(MYSQL *my_connection, int fd_client)
 				}
 			}
 		}
+
 	}else if(strncmp(role, "enroll", 6) == 0){
+
 		while(1){
 			memset(&user_name, 0 ,128);
 			memset(&user_passwd, 0, 128);
@@ -79,6 +85,7 @@ char *User_init(MYSQL *my_connection, int fd_client)
 			strcat(query, user_name);
 			strcat(query, "';");
 			res = mysql_query(my_connection, query);
+
 			if(!res){
 				result = mysql_store_result(my_connection);
 				if(result){
@@ -91,15 +98,18 @@ char *User_init(MYSQL *my_connection, int fd_client)
 					}
 				}
 			}
+
 			memset(&query, 0, 1024);
-			strcpy(path, "/mnt/user_file/.");
+			strcpy(path, "./.user_file/.");
 			strcat(path, user_name);
 			int flag0  = mkdir(path, 0700);
+
 			if(flag0 != 0){
 				perror("the dir create error\n");
 			
 			}
 //			printf("%s\n", path);
+
 			sprintf(query, "%s%s%s%s%s%d%s%s%s", \
 					"INSERT INTO ACCOUNT(Name, Passwd, Role, Path) VALUES ('",\
 					user_name, "', '",\

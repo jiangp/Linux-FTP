@@ -14,27 +14,29 @@ void do_gets(int fd_client, int role)
 {
 	if(role == 3){
 		return ;
-	}else{
-	struct stat mystat;
-	int send_len;
-	char file_name[256]="0";
-
-	memset(&file_name, 0 , 256);
-	recv_buf(fd_client, (char*)&send_len, 4);
-	recv_buf(fd_client, file_name, send_len);
-
-	file_name[strlen(file_name) - 1] = '\0';
-
-	lstat(file_name, &mystat);
-	if(S_ISDIR(mystat.st_mode)){
-		send(fd_client, "dir", 8, 0);
-		downDir(fd_client, file_name);		
 	}
 	else{
-		downFile(fd_client, file_name);
+		struct stat mystat;
+		int send_len;
+		char file_name[256] = "0";
+
+		memset(&file_name, 0 , 256);
+		recv_buf(fd_client, (char*)&send_len, 4);
+		recv_buf(fd_client, file_name, send_len);
+
+		file_name[strlen(file_name) - 1] = '\0';
+
+		lstat(file_name, &mystat);
+		if(S_ISDIR(mystat.st_mode)){
+			send(fd_client, "dir", 8, 0);
+			downDir(fd_client, file_name);		
+		}
+		else{
+			downFile(fd_client, file_name);
+		}
+
+		printf("send complient!\n");
 	}
-	printf("send complient!\n");
-}
 }
 
 
@@ -43,7 +45,7 @@ void downDir(int fd_client, char *dir_name)
 	DIR *pdir = opendir(dir_name);
 	if(pdir == NULL){
 		perror("opedir!\n");
-	    send(fd_client, "over", 8, 0);
+		send(fd_client, "over", 8, 0);
 		return ;
 	}
 	chdir(dir_name);
@@ -58,9 +60,9 @@ void downDir(int fd_client, char *dir_name)
 				continue;
 			}
 			else{
-				send(fd_client,"dir", 8, 0);
+				send(fd_client, "dir", 8, 0);
 				send(fd_client, mydirent->d_name, sizeof(mydirent->d_name), 0);
-//				printf("%s: %d\n", mydirent->d_name, sizeof(mydirent->d_name));
+				//printf("%s: %d\n", mydirent->d_name, sizeof(mydirent->d_name));
 				downDir(fd_client, mydirent->d_name);	
 			}
 		}
@@ -81,11 +83,11 @@ void downFile(int fd_client, char *name)
 	int send_len;
 	char msg[1024];
 	char file_name[256] = "0";
-	char dir[256] ="0";
-	getcwd(dir,sizeof(dir));
+	char dir[256] = "0";
+	getcwd(dir, sizeof(dir));
 	sprintf(file_name,"%s/%s",dir, name);
 	name[strlen(file_name) -1] = '\0';
-	int fd_file = open(file_name,O_RDONLY);
+	int fd_file = open(file_name, O_RDONLY);
 	if(fd_file == -1){
 		perror("fd_file fail!\n");
 		exit(1);

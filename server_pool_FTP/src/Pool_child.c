@@ -9,7 +9,7 @@
 
 void make_child(pchild_t *phead_child, int nchild, int n)
 {
-	pchild_t parr;//, pcur, ppre;
+	pchild_t parr, pcur, ppre;
 	while(nchild > n)
 	{
 		parr = (pchild_t)calloc(1, sizeof(child_t));
@@ -24,19 +24,28 @@ void make_child(pchild_t *phead_child, int nchild, int n)
 		{
 			close(fds[1]);
 			child_main(fds[0]);
-			memset(&parr, 0 ,sizeof(child_t));
 
-			/*delete the note							
-	    	pcur = parr->m_head;
-			ppre = parr->m_next;		
-			pcur->m_next = ppre;
-			ppre->m_head = pcur;			
-			printf("the exit process is :%d\n", parr->child_fd);
-			printf("111\n");
-			memset(&parr, 0 ,sizeof(child_t));*/
-			
+			/*delete the note*/
+			pid = getpid();
+			parr = *phead_child;
+			while(parr){	
+			 	if(parr->child_pid == pid){
+					pcur = parr->m_head;
+					ppre = parr->m_next;		
+					pcur->m_next = ppre;
+					ppre->m_head = pcur;			
+					printf("the exit process is :%d\n", parr->child_pid);
+					memset(&parr, 0, sizeof(child_t));
+					break;
+				}else
+					parr = parr->m_next;
+			}	
 			exit(1);
 		}
+
+
+
+
 		close(fds[0]);
 		/*status */
 		parr->child_pid = pid;
@@ -48,9 +57,9 @@ void make_child(pchild_t *phead_child, int nchild, int n)
 		/*add in list*/
 		if((*phead_child)==NULL)
 		{
-			(*phead_child)=parr;
-			parr->m_next=NULL;
-			parr->m_head=NULL;
+			(*phead_child) = parr;
+			parr->m_next = NULL;
+			parr->m_head = NULL;
 		}else
 		{
 			parr->m_next = (*phead_child);

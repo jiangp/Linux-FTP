@@ -15,18 +15,24 @@ void do_puts(int fd_client)
 	char name[128] = "0" ;
 	char msg[1024] = "0" ;
 	char file_name[128] = "0";
+	
+	/*get name*/
 	memset(&file_name, 0, 128);
-	recv_buf(fd_client, (char*)&recv_len,4);
+	recv_buf(fd_client, (char*)&recv_len, 4);
 	recv_buf(fd_client, file_name, recv_len);
 
-	sprintf(name ,"%s/%s",dir ,file_name);
+	sprintf(name ,"%s/%s", dir, file_name);
 	name[strlen(name) - 1] = '\0';
-	int fd_file = open(name,O_WRONLY | O_CREAT,0666);
+	
+	/*open file*/
+	int fd_file = open(name, O_WRONLY | O_CREAT, 0666);
 	if(fd_file == -1)
 	{
 		perror("error open\n");
 		exit(1);
 	}
+
+	/*download*/
 	int recv_sum = 0;
 	while(1)
 	{
@@ -40,7 +46,7 @@ void do_puts(int fd_client)
 		recv_sum += recv_buf(fd_client, msg, recv_len);
 		write(fd_file, msg, recv_len );
 		system("clear");
-		printf("downloading...%.2fkbs\n",(double)recv_sum /1024);
+		printf("downloading...%.2fkbs\n", (double)recv_sum /1024);
 	}
 	printf("recv complient!\n");
 
