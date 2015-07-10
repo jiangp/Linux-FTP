@@ -6,7 +6,7 @@
  ************************************************************************/
 #include<mysql/mysql.h>
 #include"FTP_server.h"
-#include"User_init.h"
+#include"userinit.h"
 #define HomePath "/home/arwen/program/Project_FTP/server_pool_FTP/file"
 
 //fork  handle

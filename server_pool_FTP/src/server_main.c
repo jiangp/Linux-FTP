@@ -5,8 +5,8 @@
   > Created Time: Mon 2 mar 2015 09:41:29 AM CST
  ************************************************************************/
 #include"FTP_server.h"
-#include"Socket.h"
-#include"Epoll.h"
+#include"socket.h"
+#include"epoll.h"
 //main
 
 
