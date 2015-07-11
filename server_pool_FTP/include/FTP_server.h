@@ -58,7 +58,6 @@ typedef struct user_infor
 void child_main(int fd_read);
 void make_child(pchild_t *phead_child, int nchild, int n);
 void handle(int fd_client);
-void ServerCmd(int fd_client, char *path, int role);
 void send_fd(int sockfd, int fd);
 void recv_fd(int sockfd, int *fd);
 void do_ls(int fd_client);
