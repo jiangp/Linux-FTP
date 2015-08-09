@@ -14,7 +14,7 @@ void client_puts(int fd_client, int role)
 		return ;
 	}else{
 		char dir[128] = "0";
-		chdir("../file");
+	//	chdir("../file");
 		getcwd(dir, sizeof(dir));
 		int send_len ;
 		char name[128] = "0";
